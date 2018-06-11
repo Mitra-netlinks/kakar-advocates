@@ -75,7 +75,7 @@
 			<xpath expr="//page[@name='settings']" position="before">
 				<page name="case_info" string="Case Info">
 					<group string="Information">
-						<field name="case_category_id" attrs="{'readonly': [('state','=','closed')]}" />
+						<field name="case_category_id" attrs="{'readonly': [('state','=','approved')]}" />
 						<field name="case_budget" attrs="{'readonly': [('state','=','approved')]}" />
 						<field name="start_date" attrs="{'readonly': [('state','=','approved')]}"/>
 					</group>
