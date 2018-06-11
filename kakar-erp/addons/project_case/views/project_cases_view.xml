@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 	
-	<!-- Action inherited for Create button project kanban view-->
-	<record id="project.open_create_project" model="ir.actions.act_window">
-		<field name="name">Create a Project</field>
-		<field name="res_model">project.project</field>
-		<field name="view_type">form</field>
-		<field name="view_mode">form</field>
-		<field name="view_id" ref="project.edit_project"/>
-		<field name="target">current</field>
-	</record>
-	
 	<!-- Inherit the project kanban view -->
 	<record model="ir.ui.view" id="view_project_kanban_inherited">
-		<field name="name">project.project.kanban.inherited</field>
-		<field name="model">project.project</field>
-		<field name="inherit_id" ref="project.view_project_kanban"/>
-		<field name="arch" type="xml">
-			
-			<xpath expr="//div[@class='o_project_kanban_boxes']/div[@class='o_project_kanban_box']" position="replace">
-				<div t-if="record.use_tasks.raw_value" class="o_project_kanban_box">
-					<a type="edit">
-					    <span class="o_value"><t t-esc="record.task_count.value"/></span>
-					    <span class="o_label"><t t-esc="record.label_tasks.value"/></span>
-					</a>
-					<a t-if="record.task_needaction_count.raw_value" class="o_needaction" name="%(project.act_project_project_2_project_task_all)d" type="action" context="{'search_default_message_needaction': 1}">
-					    <t t-esc="record.task_needaction_count.raw_value"/>
-					</a>
+           <field name="name">project.project.kanban.inherited</field>
+           <field name="model">project.project</field>
+           <field name="inherit_id" ref="project.view_project_kanban"/>
+           <field name="arch" type="xml">
+           	<xpath expr="//div[@class='o_project_kanban_boxes']/div[@class='o_project_kanban_box']" position="replace">
+            	<div t-if="record.use_tasks.raw_value" class="o_project_kanban_box">
+				    <a type="edit">
+				        <span class="o_value"><t t-esc="record.task_count.value"/></span>
+				        <span class="o_label"><t t-esc="record.label_tasks.value"/></span>
+				    </a>
+				    <a t-if="record.task_needaction_count.raw_value" class="o_needaction" name="%(project.act_project_project_2_project_task_all)d" type="action" context="{'search_default_message_needaction': 1}">
+				        <t t-esc="record.task_needaction_count.raw_value"/>
+				    </a>
 				</div>
-			</xpath>
+           	</xpath>
 		</field>
 	</record>
 	
@@ -39,8 +28,30 @@
            <field name="inherit_id" ref="project.edit_project"/>
            <field name="arch" type="xml">
            
+           <xpath expr="//form/sheet" position="before">
+           		<header>
+           			<button name="action_draft" type="object"
+                        string="Reset to draft"
+                        states="retainer_aggrement,cancel"/>
+		            <button name="action_retainer_aggrement" type="object"
+	                    string="Retainer Aggrement" states="draft"
+	                    class="oe_highlight"/>
+	                <button name="action_approved" type="object"
+	                    string="Approve" states="retainer_aggrement"
+	                    class="oe_highlight"/>
+		            <button name="action_cancel" type="object"
+	                    string="Cancel" states="draft"
+	                    class="oe_highlight"/>
+	                <button name="action_closed" type="object"
+	                    string="Close" states="approved"
+	                    class="oe_highlight"/>
+           			<field name="state" widget="statusbar"/>
+           		</header>
+           	</xpath>
+
 			<xpath expr="//field[@name='name']" position="attributes">
 				<attribute name="placeholder">Case Name</attribute>
+				<attribute name="attrs">{'readonly': [('state','=','approved')]}</attribute>
 			</xpath>
 			
 			<xpath expr="//field[@name='name']" position="before">
@@ -54,19 +65,25 @@
 			
 			<xpath expr="//field[@name='partner_id']" position="attributes">
 				<attribute name="string">Client</attribute>
+				<attribute name="attrs">{'readonly': [('state','=','approved')]}</attribute>
 			</xpath>
+<!-- 
+			<xpath exp="//page/field[@name='privacy_visibility']" position="attribute">
+				<attribute name="invisible">True</attribute>
+			</xpath> -->
            	
 			<xpath expr="//page[@name='settings']" position="before">
 				<page name="case_info" string="Case Info">
 					<group string="Information">
-						<field name="case_category_id"/>
-						<field name="case_budget"/>
-						<field name="start_date"/>
+						<field name="case_category_id" attrs="{'readonly': [('state','=','closed')]}" />
+						<field name="case_budget" attrs="{'readonly': [('state','=','approved')]}" />
+						<field name="start_date" attrs="{'readonly': [('state','=','approved')]}"/>
 					</group>
 					<group string="Description"/>
-					<field name="description"/>
+					<field name="description" attrs="{'readonly': [('state','=','approved')]}"/>
 				</page>
 			</xpath>
+
 		</field>
 	</record>
 	
@@ -90,5 +107,35 @@
 			</xpath>
 		</field>
 	</record>
+
+<!--     <record model="ir.actions.act_window" id="open_create_project_inherited">
+        <field name="name">Create a Project Inherited</field>
+        <field name="res_model">project.project</field>
+        <field name="inherit_id" ref="project.open_create_project"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="project.edit_project"/>
+        <field name="target">current</field>
+    </record> -->
+
+<!--     <record model="ir.actions.act_window" id="open_create_project_inherited">
+        <field name="name">Create.Project.Inherited</field>
+        <field name="res_model">project.project</field>
+        <field name="inherit_id" ref="project.open_create_project"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="arch" type="xml">
+			<field name="view_id" ref="project.edit_project"/>
+    		<field name="target">new</field>
+		</field> 
+    </record> -->
+
+	<!-- Project Main Menu and Sub Menu Rename-->
+	<menuitem name="Cases (Projects)" id="project.menu_main_pm" groups="project.group_project_manager,project.group_project_user" web_icon="project,static/description/icon.png" sequence="50"/>
+	<menuitem id="project.menu_projects" name="Cases (Projects)" parent="project.menu_main_pm" sequence="1"/>
+	<menuitem action="project.open_view_project_all" id="project.menu_projects_sub_menu" name="Cases" parent="project.menu_projects" sequence="1"/>
+
+	<!-- Customer Menu in Cases/Projects-->
+	<menuitem id="menu_account_customer_case" name="Clients" parent="project.menu_projects" action="base.action_partner_customer_form"/>
 	
 </odoo>

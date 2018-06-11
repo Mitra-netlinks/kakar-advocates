@@ -19,10 +19,6 @@ class CreateTimesheetInvoice(models.TransientModel):
 
         for timesheet_line in timesheet_ids:
             invoice_line_vals.append((0, 0, {
-                'create_date': datetime.now().strftime(DF),
-                'create_uid': self._uid,
-                'write_date': datetime.now().strftime(DF),
-                'write_uid': self._uid,
                 'price_unit': timesheet_line.amount,
                 'currency_id': timesheet_line.currency_id.id,
                 'partner_id': timesheet_line.partner_id.id,

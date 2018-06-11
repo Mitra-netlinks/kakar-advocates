@@ -17,8 +17,40 @@ class ProjectCases(models.Model):
     case_category_id = fields.Many2one('case.category', string='Case Category', required=True)
     user_id = fields.Many2one('res.users', string='Case Manager', default=lambda self: self.env.user)
 
+    state = fields.Selection([('draft', 'Draft'),
+                             ('retainer_aggrement', 'Retainer Aggrement'), 
+                             ('approved', 'Approved'),
+                             ('cancel','Cancel'),
+                             ('closed','Closed')], string='State', default='draft')
+
     @api.model
     def create(self, vals):
         result = super(ProjectCases, self).create(vals)
         result.update({'case_ref_no': self.env['ir.sequence'].next_by_code('case_ref_no')})
         return result
+
+    @api.multi
+    def action_draft(self):
+        self.state = 'draft'
+
+    @api.multi
+    def action_retainer_aggrement(self):
+        self.state = 'retainer_aggrement'
+
+    @api.multi
+    def action_approved(self):
+        self.state = 'approved'
+
+    @api.multi
+    def action_cancel(self):
+        self.state = 'cancel'
+
+    @api.multi
+    def action_closed(self):
+        self.state = 'closed'
+
+
+
+
+
+

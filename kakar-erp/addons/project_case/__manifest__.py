@@ -19,8 +19,7 @@ Modification in Main Project Module
     """,
     'data': [
         'views/project_cases_view.xml',
-        'views/case_category_view.xml',
-        'views/project_case_menus_view.xml'
+        'views/case_category_view.xml'
     ],
     'demo': [],
     'installable': True,
